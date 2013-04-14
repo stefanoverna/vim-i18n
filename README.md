@@ -3,7 +3,7 @@
 
 ### Introduction
 
-`vim-i18n' helps you translate your Ruby/Rails project. It just exposes a 
+`vim-i18n` helps you translate your Ruby/Rails project. It just exposes a 
 single function, `I18nTranslateString`. This function takes the current visual 
 selection, converts it into a `I18n.t()` call, and adds the proper key in a 
 specified YAML store.
