@@ -1,0 +1,83 @@
+#!/usr/bin/env ruby
+# vim: ft=ruby:
+
+require "yaml"
+
+class YAMLator
+  attr_reader :hash
+
+  def initialize(data=nil, preamble=nil)
+    if data
+      @data = data
+      @hash = YAML.load(@data)
+    else
+      @data = preamble.to_s
+      @hash = {}
+    end
+  end
+
+  def to_yaml
+    [ preamble, @hash.to_yaml ].join
+  end
+
+  def to_flat_yaml
+    tree = flatten_tree(@hash)
+    flat = tree.inject({}) { |hash, (chain, leaf)| hash.merge(chain.join(".") => leaf) }
+    [ preamble, flat.to_yaml ].join
+  end
+
+  def to_nested_yaml
+    yamlator = self.class.new(nil, preamble)
+    @hash.each do |key, value|
+      yamlator[key] = value
+    end
+    yamlator.to_yaml
+  end
+
+  def []=(key, value)
+    chain = key.split('.')
+    this_hash = @hash
+    chain.each_with_index do |part, index|
+      is_last = index==chain.length-1
+      key_this_far = chain[0..index].join('.')
+
+      case this_hash[part]
+      when Hash
+        raise("trying to add a string to a hash key in use: #{key_this_far.inspect}") if is_last
+      when String
+        raise("trying to add to a string key in use: #{key_this_far.inspect}")
+      else
+        this_hash[part] = is_last ? value : {}
+      end
+      this_hash = this_hash[part]
+    end
+    value
+  end
+
+private
+
+  # Comments and blank lines in the beginning of the file.
+  def preamble
+    @data[/\A(\s*(#.*?)?\n)+/]
+  end
+
+  def flatten_tree(tree, chain=[])
+    if tree.is_a?(Hash)
+      tree.inject([]) { |m, (k,v)| m += flatten_tree(v, chain+[k]) }
+    else
+      [[chain, tree]]
+    end
+  end
+
+end
+
+file = ARGV[0]
+key = ARGV[1]
+value = ARGV[2]
+
+file_content = File.read(file)
+yamlator = YAMLator.new(file_content)
+yamlator[yamlator.hash.keys.first + "." + key] = value
+
+File.open(file, 'w') { |f| f.write yamlator.to_yaml }
+
