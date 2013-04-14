@@ -13,8 +13,8 @@ Mandatory example:
 ```
   # app/controllers/static_controller.rb
   @some_text = "Hello, %{name}!"
-               ^^^^^^^^^^^^^^^^
-               Visual select this text and hit <leader>z
+               ^^^^^^^^^^^^^^^^^
+               -> Visual select this text and hit <leader>z
 ```
 
 The plugin will first ask you for the I18n key to use (ie. `homepage.greeting`).
@@ -27,8 +27,8 @@ YAML store:
 ```
   # app/controllers/static_controller.rb
   @some_text = I18n.t('homepage.greeting', name: '')
-                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-                      BOOM!
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               -> BOOM!
 
   # config/locales/en.yml
   ---
