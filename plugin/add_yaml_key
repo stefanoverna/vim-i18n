@@ -6,32 +6,13 @@ require "yaml"
 class YAMLator
   attr_reader :hash
 
-  def initialize(data=nil, preamble=nil)
-    if data
-      @data = data
-      @hash = YAML.load(@data)
-    else
-      @data = preamble.to_s
-      @hash = {}
-    end
+  def initialize(data)
+    @data = data
+    @hash = YAML.load(@data)
   end
 
   def to_yaml
     [ preamble, @hash.to_yaml ].join
-  end
-
-  def to_flat_yaml
-    tree = flatten_tree(@hash)
-    flat = tree.inject({}) { |hash, (chain, leaf)| hash.merge(chain.join(".") => leaf) }
-    [ preamble, flat.to_yaml ].join
-  end
-
-  def to_nested_yaml
-    yamlator = self.class.new(nil, preamble)
-    @hash.each do |key, value|
-      yamlator[key] = value
-    end
-    yamlator.to_yaml
   end
 
   def []=(key, value)
@@ -54,30 +35,22 @@ class YAMLator
     value
   end
 
-private
+  private
 
-  # Comments and blank lines in the beginning of the file.
   def preamble
     @data[/\A(\s*(#.*?)?\n)+/]
   end
-
-  def flatten_tree(tree, chain=[])
-    if tree.is_a?(Hash)
-      tree.inject([]) { |m, (k,v)| m += flatten_tree(v, chain+[k]) }
-    else
-      [[chain, tree]]
-    end
-  end
-
 end
 
 file = ARGV[0]
 key = ARGV[1]
 value = ARGV[2]
 
-file_content = File.read(file)
+basename = File.basename(file, ".yml").match(/[^\.]+$/).to_s
+file_content = File.exists?(file) ? File.read(file) : "#{basename}:"
 yamlator = YAMLator.new(file_content)
 yamlator[yamlator.hash.keys.first + "." + key] = value
 
 File.open(file, 'w') { |f| f.write yamlator.to_yaml }
+
 
