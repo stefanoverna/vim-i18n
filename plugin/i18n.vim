@@ -76,3 +76,5 @@ function! s:askForYamlPath()
   return path
 endfunction
 
+vnoremap <leader>z :call I18nTranslateString()<CR>
+
