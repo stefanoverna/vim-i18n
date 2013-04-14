@@ -1,0 +1,51 @@
+*i18n.txt*  Helps you I18n your Ruby projects
+
+Author:  Stefano Verna <http://welaika.com/>
+License: Same terms as Vim itself (see |license|)
+
+INTRODUCTION                                    *i18n*
+
+I18n helps you translate your Ruby project. It just exposes a single function,
+I18nTranslateString. This function takes the current visual selection, converts
+it into a I18n.t() call, and adds the proper key in a specified YAML store.
+
+Example:
+
+>
+  # app/controllers/static_controller.rb
+
+  @some_text = "Hello, %{name}!"
+               ^^^^^^^^^^^^^^^^
+               Visual select this text and :call I18nTranslateString
+<
+
+The plugin will first ask you for the I18n key to use (ie. 'homepage.greeting').
+Then, if still not specified, the plugin will ask you the location of the YAML
+store (ie. 'config/locales/en.yml').
+
+At this point, the plugin will replace the selection, and add the string to the
+YAML store:
+
+>
+  # app/controllers/static_controller.rb
+
+  @some_text = I18n.t('homepage.greeting', name: '')
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                      BOOM!
+
+  # config/locales/en.yml
+
+  ---
+  en:
+    homepage:
+      title: "This is my text"
+<
+
+MAPPING                                         *i18n-mappings*
+
+The following mapping is available:
+
+<leader>z                         calls I18nTranslateString() function
+
+ vim:tw=78:et:ft=help:norl:
+

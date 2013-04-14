@@ -1,3 +1,5 @@
+let s:install_path=expand("<sfile>:p:h")
+
 function! I18nTranslateString()
   " copy last visual selection to x register
   normal gv"xy
@@ -32,28 +34,15 @@ function! s:generateI18nCall(key, variables)
     return "I18n.t('" . a:key . "', " . s:generateI18nArguments(a:variables) . ")"
   else
     return "I18n.t('" . a:key . "')"
-  end
+  endif
 endfunction
 
 function! s:generateI18nArguments(variables)
   let arguments = []
   for interpolation in a:variables
-    call add(arguments, interpolation . ": \"\"")
+    call add(arguments, interpolation . ": ''")
   endfor
   return join(arguments, ", ")
-endfunction
-
-function! s:askForYamlPath()
-  call inputsave()
-  let path = ""
-  if exists('g:I18nYamlPath')
-    let path = g:I18nYamlPath
-  else
-    let path = input('YAML store: ', 'app/locale/en.yml')
-    let g:I18nYamlPath = path
-  end
-  call inputrestore()
-  return path
 endfunction
 
 function! s:askForI18nKey()
@@ -61,7 +50,7 @@ function! s:askForI18nKey()
   let key = ""
   if exists('g:I18nKey')
     let key = g:I18nKey
-  end
+  endif
   let key = input('I18n key: ', key)
   let g:I18nKey = key
   call inputrestore()
@@ -70,7 +59,20 @@ endfunction
 
 function! s:addStringToYamlStore(text, key)
   let yaml_path = s:askForYamlPath()
-  let install_path = expand('<sfile>:p:h')
-  call system(install_path . "/add_yaml_key " . yaml_path . " " . a:key . " '" . a:text . "'")
+  let cmd = s:install_path . "/add_yaml_key '" . yaml_path . "' '" . a:key . "' '" . a:text . "'"
+  call system(cmd)
+endfunction
+
+function! s:askForYamlPath()
+  call inputsave()
+  let path = ""
+  if exists('g:I18nYamlPath')
+    let path = g:I18nYamlPath
+  else
+    let path = input('YAML store: ', 'config/locales/en.yml', 'file')
+    let g:I18nYamlPath = path
+  endif
+  call inputrestore()
+  return path
 endfunction
 
