@@ -34,6 +34,6 @@ YAML store:
   ---
   en:
     homepage:
-      title: "This is my text"
+      title: "Hello, %{name}!"
 ```
 
