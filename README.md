@@ -8,7 +8,9 @@ single function, `I18nTranslateString`. This function takes the current visual
 selection, converts it into a `I18n.t()` call, and adds the proper key in a 
 specified YAML store.
 
-Mandatory example:
+### Introduction
+
+Say you have the following line in your codebase:
 
 ```
   # app/controllers/static_controller.rb
