@@ -5,32 +5,32 @@ require "yaml"
 
 class YAMLator
   attr_reader :hash
+  attr_reader :data
 
   def initialize(data)
-    @data = data
-    @hash = YAML.load(@data)
+    @data, @hash = data, YAML.load(data)
   end
 
   def to_yaml
-    [ preamble, @hash.to_yaml ].join
+    [preamble, hash.to_yaml].join
   end
 
   def []=(key, value)
     chain = key.split('.')
-    this_hash = @hash
+    current_hash = hash
     chain.each_with_index do |part, index|
-      is_last = index==chain.length-1
+      is_last = index == chain.length - 1
       key_this_far = chain[0..index].join('.')
 
-      case this_hash[part]
+      case current_hash[part]
       when Hash
         raise("trying to add a string to a hash key in use: #{key_this_far.inspect}") if is_last
       when String
         raise("trying to add to a string key in use: #{key_this_far.inspect}")
       else
-        this_hash[part] = is_last ? value : {}
+        current_hash[part] = is_last ? value : {}
       end
-      this_hash = this_hash[part]
+      current_hash = current_hash[part]
     end
     value
   end
@@ -38,7 +38,7 @@ class YAMLator
   private
 
   def preamble
-    @data[/\A(\s*(#.*?)?\n)+/]
+    data[/\A(\s*(#.*?)?\n)+/]
   end
 end
 
@@ -46,11 +46,10 @@ file = ARGV[0]
 key = ARGV[1]
 value = ARGV[2]
 
-basename = File.basename(file, ".yml").match(/[^\.]+$/).to_s
-file_content = File.exists?(file) ? File.read(file) : "#{basename}:"
+locale = File.basename(file, ".yml")[/[^\.]+$/]
+file_content = File.exists?(file) ? File.read(file) : "#{locale}:"
 yamlator = YAMLator.new(file_content)
 yamlator[yamlator.hash.keys.first + "." + key] = value
 
 File.open(file, 'w') { |f| f.write yamlator.to_yaml }
-
 
