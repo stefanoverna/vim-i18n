@@ -75,3 +75,9 @@ Add this line or a simliar one to your `~.vimrc`:
 ```vim
 vmap <Leader>z :call I18nTranslateString()<CR>
 ```
+## Installation
+
+Install via [pathogen.vim](https://github.com/tpope/vim-pathogen), simply copy and paste:
+
+    cd ~/.vim/bundle
+    git clone git://github.com/stefanoverna/vim-i18n.git
