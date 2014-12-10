@@ -60,6 +60,7 @@ key = ARGV[1]
 value = ARGV[2]
 
 locale = File.basename(file, ".yml")[/[^\.]+$/]
+file = File.expand_path(file)
 file_content = File.exists?(file) ? File.read(file) : "#{locale}:"
 yamlator = YAMLator.new(file_content)
 yamlator[yamlator.hash.keys.first + "." + key] = value
