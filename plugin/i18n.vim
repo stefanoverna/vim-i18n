@@ -85,7 +85,8 @@ endfunction
 
 function! s:addStringToYamlStore(text, key)
   let yaml_path = s:askForYamlPath()
-  let cmd = s:install_path . "/add_yaml_key '" . yaml_path . "' '" . a:key . "' '" . a:text . "'"
+  let escaped_text = shellescape(a:text)
+  let cmd = s:install_path . "/add_yaml_key '" . yaml_path . "' '" . a:key . "' " . escaped_text
   call system(cmd)
 endfunction
 
