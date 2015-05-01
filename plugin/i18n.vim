@@ -11,7 +11,7 @@ function! I18nTranslateString()
   let text = s:removeQuotes(s:strip(@x))
   let variables = s:findInterpolatedVariables(text)
   let key = s:askForI18nKey()
-  if &filetype == 'eruby' || &filetype == 'eruby.html'
+  if &filetype == 'eruby' || &filetype == 'eruby.html' || &filetype == 'slim' || &filetype == 'haml'
     let fullKey = s:determineFullKey(key)
     if IsSyntaxRuby() != -1
       let @x = s:generateI18nCall(key, variables, "t('", "')")
