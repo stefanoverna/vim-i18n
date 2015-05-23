@@ -60,9 +60,6 @@ MAPPING                                         *i18n-mappings*
 The following mapping is available:
 
 <leader>z                         calls I18nTranslateString() function
-
- vim:tw=78:et:ft=help:norl:
-
 <leader>dt                         calls I18nDisplayTranslation() function
 
  vim:tw=78:et:ft=help:norl:
