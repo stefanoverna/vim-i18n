@@ -27,6 +27,41 @@ function! I18nTranslateString()
   normal gv"xp
 endfunction
 
+function! I18nDisplayTranslation()
+  normal gv"ay
+  ruby get_translation(Vim.evaluate('@a'), Vim.evaluate('s:askForYamlPath()'))
+endfunction
+
+ruby << EOF
+require 'yaml'
+
+def get_translation(translation_key, file_name)
+  locale = file_name.match(/(?<locale>\w+[-_]?\w+)\.yml$/)[:locale]
+  translations_hash = load_yaml(file_name)
+  translation = get_deep_value_for(translations_hash, "#{locale}.#{translation_key}")
+  print translation || "Sorry, there's no translation for the key: '#{translation_key}', with locale: '#{locale}'"
+end
+
+def load_yaml(file_name)
+  begin
+    YAML.load(File.open(file_name))
+  rescue
+    raise "There's a problem with parsing translations from the file: #{file_name}"
+  end
+end
+
+def get_deep_value_for(hash, key)
+  return if hash.nil?
+  keys = key.split('.')
+  first_segment_of_key = keys.delete_at(0)
+  segment_tail_of_key = keys.join('.')
+  value = hash[first_segment_of_key]
+
+  return value if segment_tail_of_key.empty?
+  get_deep_value_for(value, segment_tail_of_key)
+end
+EOF
+
 function! s:removeQuotes(text)
   let text = substitute(a:text, "^[\\\"']", "", "")
   let text = substitute(text, "[\\\"']$", "", "")
@@ -104,3 +139,4 @@ function! s:askForYamlPath()
 endfunction
 
 vnoremap <leader>z :call I18nTranslateString()<CR>
+vnoremap <leader>dt :call I18nDisplayTranslation()<CR>

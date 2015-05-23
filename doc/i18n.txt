@@ -41,11 +41,25 @@ YAML store:
       title: "Hello, %{name}!"
 <
 
+Displaying translation for the key
+
+Let say you have the following key within view / model / controller:
+
+>
+# app/controllers/static_controller.rb
+
+@some_text = I18n.t('homepage.greeting', name: '')
+                     ^^^^^^^^^^^^^^^^^
+<
+
+After selecting and executing I18nDisplayTranslation(), the plugin will return you value for the translation.
+
+
 MAPPING                                         *i18n-mappings*
 
 The following mapping is available:
 
 <leader>z                         calls I18nTranslateString() function
+<leader>dt                         calls I18nDisplayTranslation() function
 
  vim:tw=78:et:ft=help:norl:
-

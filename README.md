@@ -68,12 +68,25 @@ en:
 
 Note that the extracted translation included the appropriate interpolation.
 
+### Displaying translation for the key
+
+Let say you have the following key within view / model / controller:
+
+```
+# app/controllers/static_controller.rb
+@some_text = I18n.t('homepage.greeting', name: '')
+                     ^^^^^^^^^^^^^^^^^
+```
+
+After selecting and executing `I18nDisplayTranslation()`, the plugin will return you value for the translation.
+
 ## Vim mapping
 
 Add this line or a simliar one to your `~.vimrc`:
 
 ```vim
 vmap <Leader>z :call I18nTranslateString()<CR>
+vmap <Leader>dt :call I18nDisplayTranslation()<CR>
 ```
 ## Installation
 
