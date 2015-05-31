@@ -13,11 +13,15 @@ function! I18nTranslateString()
   let key = s:askForI18nKey()
   if &filetype == 'eruby' || &filetype == 'eruby.html' || &filetype == 'slim' || &filetype == 'haml'
     let fullKey = s:determineFullKey(key)
+
     if IsSyntaxRuby() != -1
       let @x = s:generateI18nCall(key, variables, "t('", "')")
-    else
+    elseif &filetype == 'eruby' || &filetype == 'eruby.html' || &filetype == 'slim'
       let @x = s:generateI18nCall(key, variables, "<%= t('", "') %>")
+    elseif &filetype == 'haml'
+      let @x = s:generateI18nCall(key, variables, "= t('", "')")
     endif
+
     call s:addStringToYamlStore(text, fullKey)
   else
     let @x = s:generateI18nCall(key, variables, "t('", "')")
