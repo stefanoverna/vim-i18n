@@ -66,4 +66,3 @@ yamlator = YAMLator.new(file_content)
 yamlator[yamlator.hash.keys.first + "." + key] = value
 
 File.open(file, 'w') { |f| f.write yamlator.to_yaml }
-
